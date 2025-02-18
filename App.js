@@ -1,131 +1,114 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  SafeAreaView,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableWithoutFeedback,
-  Keyboard,
-  TouchableOpacity
-} from 'react-native';
+import React, { useState } from "react";
+import { 
+  KeyboardAvoidingView, 
+  StyleSheet, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  TouchableWithoutFeedback, 
+  Keyboard, 
+  View 
+} from "react-native";
+import { StatusBar } from "expo-status-bar";
 
-const Header = () => {
-  return (
-    <View style={styles.header}>
-      <Text style={styles.headerText}>Đăng nhập</Text>
-    </View>
-  );
-};
+export default function App() {
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-const App = () => {
-  const [phoneNumber, setPhoneNumber] = useState('');
-
-  const handleLogin = () => {
-    console.log("Button Pressed");
-    console.log("Phone Number: ", phoneNumber);
+  const validatePhoneNumber = (phone) => {
+    const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
+    if (phoneRegex.test(phone)) {
+      setErrorMessage("Số điện thoại hợp lệ!");
+    } else {
+      setErrorMessage("Số điện thoại không hợp lệ!");
+    }
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
-    >
-      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <SafeAreaView style={styles.innerContainer}>
-          <Header />
-          <Text style={styles.text}>Nhập số điện thoại</Text>
-          <Text style={styles.description}>
-            Dùng số điện thoại của bạn để đăng nhập hoặc đăng ký tài khoản OneHousing Pro
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAvoidingView style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Đăng nhập</Text>
+        </View>
+        <View style={styles.title}>
+          <Text style={styles.titleText}>Nhập số điện thoại</Text>
+        </View>
+        <View style={styles.desc}>
+          <Text>
+            Dùng số điện thoại để đăng nhập hoặc đăng ký tài khoản tại OneHousing Pro
           </Text>
+        </View>
+        <View style={styles.inputText}>
           <TextInput
-            style={styles.input}
             placeholder="Nhập số điện thoại của bạn"
-            keyboardType="phone-pad"
-            autoFocus={true}  // Tự động focus vào TextInput khi mở app
-            returnKeyType="next"
-            onChangeText={setPhoneNumber}  // Lưu giá trị khi thay đổi
-            value={phoneNumber}  // Liên kết giá trị với state
-            onFocus={() => console.log('TextInput Focused')}
+            keyboardType="numeric"
+            style={styles.textInput}
+            value={phoneNumber}
+            onChangeText={setPhoneNumber}
           />
-        </SafeAreaView>
-      </TouchableWithoutFeedback>
-      {/* Button Container */}
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Tiếp tục</Text>
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+          {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+        </View>
+        <View>
+          <TouchableOpacity 
+            style={styles.buttonOpacity} 
+            onPress={() => validatePhoneNumber(phoneNumber)}
+          >
+            <Text style={styles.buttonText}>Tiếp tục</Text>
+          </TouchableOpacity>
+        </View>
+        <StatusBar style="auto" />
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f0f0',
-  },
-  innerContainer: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    paddingHorizontal: 20,
-    paddingBottom: 20, // Tạo khoảng cách giữa TextInput và nút
+    backgroundColor: "#fff",
+    padding: 20,
+    marginTop: 40,
   },
   header: {
-    height: 60,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    marginBottom: 20,
-    paddingHorizontal: 20,
+    paddingBottom: 10,
+    marginBottom: 60,
+    borderBottomWidth: 2,
+    borderBottomColor: "#D3D3D3",
   },
   headerText: {
-    fontSize: 25,
-    color: '#000',
-    fontWeight: 'bold',
-    marginLeft: 8,
+    fontSize: 24,
+    fontWeight: "bold",
   },
-  text: {
+  title: {
+    marginBottom: 20,
+  },
+  titleText: {
     fontSize: 20,
-    color: '#000',
+  },
+  desc: {
     marginBottom: 10,
-    marginTop: 30,
-    marginLeft: 8,
   },
-  description: {
-    fontSize: 14,
-    color: '#666',
+  inputText: {
     marginBottom: 20,
-    marginLeft: 8,
   },
-  input: {
-    height: 40,
-    width: '100%',
-    maxWidth: 350,
-    borderColor: '#ccc',
-    borderWidth: 1,
+  textInput: {
+    borderBottomWidth: 1,
+    borderColor: "#ccc",
+    paddingVertical: 10,
+    fontSize: 16,
+  },
+  errorText: {
+    color: "red",
+    marginTop: 5,
+  },
+  buttonOpacity: {
+    backgroundColor: "#0000FF",
+    padding: 15,
     borderRadius: 5,
-    marginBottom: 20,
-    paddingHorizontal: 10,
-    backgroundColor: '#fff',
-  },
-  buttonContainer: {
-    justifyContent: 'flex-end',
-    paddingHorizontal: 20,
-    paddingBottom: 10,
-  },
-  button: {
-    backgroundColor: '#D3D3D3',  // Màu nền xám trắng cho button
-    paddingVertical: 15,
-    borderRadius: 5,
-    alignItems: 'center',
+    alignItems: "center",
   },
   buttonText: {
-    color: '#000',
-    fontSize: 18,
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
   },
 });
-
-export default App;
